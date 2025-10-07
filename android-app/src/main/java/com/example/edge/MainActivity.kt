@@ -31,8 +31,14 @@ class MainActivity : AppCompatActivity() {
         tvFps = findViewById(R.id.tvFps)
 
         btnToggle.setOnClickListener {
-            val mode = glView.toggleProcessed()
-            btnToggle.text = if (mode) "Toggle: Processed" else "Toggle: Raw"
+            val currentMode = glView.cycleShaderMode()
+            val modeName = when (currentMode) {
+                com.example.edge.gl.CameraRenderer.ShaderMode.PASS -> "Normal"
+                com.example.edge.gl.CameraRenderer.ShaderMode.GRAYSCALE -> "Grayscale"
+                com.example.edge.gl.CameraRenderer.ShaderMode.INVERT -> "Invert"
+                com.example.edge.gl.CameraRenderer.ShaderMode.CANNY -> "Canny Edge"
+            }
+            btnToggle.text = "Mode: $modeName"
         }
     }
 
