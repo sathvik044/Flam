@@ -23,7 +23,6 @@ class CameraGLSurfaceView @JvmOverloads constructor(
 
         cameraHelper = CameraHelper(context) { imageData, width, height ->
             renderer.updateFrame(imageData, width, height)
-        }
     }
 
     fun start() {
@@ -34,6 +33,10 @@ class CameraGLSurfaceView @JvmOverloads constructor(
 
     fun toggleProcessed(): Boolean {
         return renderer.toggleProcessed()
+    }
+
+    fun setFpsListener(listener: ((Float) -> Unit)?) {
+        renderer.setFpsListener(listener)
     }
 
     override fun onPause() {
