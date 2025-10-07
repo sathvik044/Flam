@@ -23,6 +23,7 @@ class CameraGLSurfaceView @JvmOverloads constructor(
 
         cameraHelper = CameraHelper(context) { imageData, width, height ->
             renderer.updateFrame(imageData, width, height)
+        }
     }
 
     fun start() {
@@ -33,6 +34,10 @@ class CameraGLSurfaceView @JvmOverloads constructor(
 
     fun toggleProcessed(): Boolean {
         return renderer.toggleProcessed()
+    }
+
+    fun cycleShaderMode(): com.example.edge.gl.CameraRenderer.ShaderMode {
+        return renderer.cycleShaderMode()
     }
 
     fun setFpsListener(listener: ((Float) -> Unit)?) {
