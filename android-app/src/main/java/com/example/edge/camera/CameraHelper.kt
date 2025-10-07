@@ -58,11 +58,70 @@ class CameraHelper(
             ).apply {
                 setOnImageAvailableListener({ reader ->
                     val image = reader.acquireLatestImage() ?: return@setOnImageAvailableListener
-                    val buffer = image.planes[0].buffer
-                    val data = ByteArray(buffer.remaining())
-                    buffer.get(data)
-                    onFrameAvailable(data, image.width, image.height)
-                    image.close()
+                    try {
+                        val width = image.width
+                        val height = image.height
+                        val yPlane = image.planes[0]
+                        val uPlane = image.planes[1]
+                        val vPlane = image.planes[2]
+
+                        val yBuffer = yPlane.buffer
+                        val uBuffer = uPlane.buffer
+                        val vBuffer = vPlane.buffer
+
+                        val yRowStride = yPlane.rowStride
+                        val uvRowStride = uPlane.rowStride
+                        val uvPixelStride = uPlane.pixelStride
+
+                        val rgba = ByteArray(width * height * 4)
+
+                        var yp: Int
+                        var up: Int
+                        var vp: Int
+                        var r: Int
+                        var g: Int
+                        var b: Int
+
+                        for (j in 0 until height) {
+                            for (i in 0 until width) {
+                                val yIndex = j * yRowStride + i
+                                val uvRow = (j / 2) * uvRowStride
+                                val uvCol = (i / 2) * uvPixelStride
+                                val uIndex = uvRow + uvCol
+                                val vIndex = uvRow + uvCol
+
+                                yp = (yBuffer.get(yIndex).toInt() and 0xFF)
+                                // For YUV_420_888, U and V are in planes[1] and [2]. Accounts for pixelStride.
+                                up = (uBuffer.get(uIndex).toInt() and 0xFF)
+                                vp = (vBuffer.get(vIndex).toInt() and 0xFF)
+
+                                val yVal = yp.toFloat()
+                                val uVal = up - 128
+                                val vVal = vp - 128
+
+                                // Standard YUV to RGB conversion
+                                var rf = yVal + 1.370705f * vVal
+                                var gf = yVal - 0.337633f * uVal - 0.698001f * vVal
+                                var bf = yVal + 1.732446f * uVal
+
+                                r = rf.toInt().coerceIn(0, 255)
+                                g = gf.toInt().coerceIn(0, 255)
+                                b = bf.toInt().coerceIn(0, 255)
+
+                                val base = (j * width + i) * 4
+                                rgba[base] = r.toByte()
+                                rgba[base + 1] = g.toByte()
+                                rgba[base + 2] = b.toByte()
+                                rgba[base + 3] = 0xFF.toByte()
+                            }
+                        }
+
+                        onFrameAvailable(rgba, width, height)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "YUV to RGBA conversion failed", e)
+                    } finally {
+                        image.close()
+                    }
                 }, backgroundHandler)
             }
 
