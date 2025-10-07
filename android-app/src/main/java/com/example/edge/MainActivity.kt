@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -13,6 +14,7 @@ import com.example.edge.ui.CameraGLSurfaceView
 class MainActivity : AppCompatActivity() {
     private lateinit var glView: CameraGLSurfaceView
     private lateinit var btnToggle: Button
+    private lateinit var tvFps: TextView
 
     private val requestPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -26,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
         glView = findViewById(R.id.glView)
         btnToggle = findViewById(R.id.btnToggle)
+        tvFps = findViewById(R.id.tvFps)
 
         btnToggle.setOnClickListener {
             val mode = glView.toggleProcessed()
@@ -52,5 +55,12 @@ class MainActivity : AppCompatActivity() {
         glView.visibility = View.VISIBLE
         glView.onResume()
         glView.start()
+
+        // Subscribe to FPS updates from renderer and show on screen
+        glView.setFpsListener { fps ->
+            runOnUiThread {
+                tvFps.text = "FPS: ${"%.1f".format(fps)}"
+            }
+        }
     }
 }
