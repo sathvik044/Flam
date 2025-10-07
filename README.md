@@ -127,6 +127,8 @@ Camera2 -> YUV -> Java/Kotlin -> JNI (byte[] or direct buffer) -> C++ (OpenCV) -
   - Add web viewer
   - Docs and screenshots
 
-## License
+## ScreenShots
+<img width="610" height="1356" alt="image" src="https://github.com/user-attachments/assets/656c6ed8-7b61-4cc8-85af-127b0238113f" />
+<img width="610" height="1356" alt="image" src="https://github.com/user-attachments/assets/b769d46f-919c-4571-af8e-e542e1f9288a" />
 
-MIT
+
