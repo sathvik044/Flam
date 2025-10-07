@@ -1,0 +1,10 @@
+# Copy this file to local.properties and configure paths
+
+# Android SDK location
+sdk.dir=C\:/Users/YourUsername/AppData/Local/Android/Sdk
+
+# OpenCV Android SDK location (download from https://opencv.org/releases/)
+# Example: C:/dev/OpenCV-android-sdk or /Users/you/opencv-android-sdk
+opencv_sdk_dir=C\:/path/to/OpenCV-android-sdk
+
+# Note: Use forward slashes or escaped backslashes on Windows
